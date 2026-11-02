@@ -1,0 +1,49 @@
+<resources>
+    <string name="app_name">ProyectoMuseo</string>
+    <string name="title_activity_artista">ArtistaActivity</string>
+    <string name="title_activity_obra">ObraActivity</string>
+
+    <string name="exhibition_title">Exhibición</string>
+    <string name="tab_hot">Tendencia</string>
+    <string name="tab_nearby">Cerca</string>
+    <string name="tab_thematic">Tematica</string>
+    <string name="tab_solo_exhibition">Solo exhibición</string>
+    <string name="buy_tickets">Comprar tickets</string>
+    <string name="closing_after_days">cierra dentro de 18 dias</string>
+    <string name="city_paris">Paris</string>
+
+    <!-- Datos de ejemplo: exhibiciones destacadas -->
+    <string name="artist_van_gogh">Vincent van Gog</string>
+    <string name="exhibition_type_solo">Solo exhibición</string>
+    <string name="museum_national_china">Museo Nacional de China</string>
+    <string name="artist_frida_kahlo">La Monalisa</string>
+    <string name="museum_louvre_paris">Louvre in Paris</string>
+
+    <!-- Datos de ejemplo: tickets -->
+    <string name="ticket_davinci_title">Leonardo Da Vinci</string>
+    <string name="ticket_davinci_date">2019.12.22 - 2020.5.15</string>
+    <string name="ticket_davinci_price">$30.00</string>
+    <string name="ticket_monet_title">Claude Monet</string>
+    <string name="ticket_monet_date">2020.1.10 - 2020.6.20</string>
+    <string name="ticket_monet_location">Musée d\'Orsay</string>
+    <string name="ticket_monet_price">$25.00</string>
+
+    <!-- Pantalla de detalle de exhibición -->
+    <string name="cd_back">Back</string>
+    <string name="cd_share">Share</string>
+
+    <string name="exhibition_time_label">Periodo:</string>
+    <string name="van_gogh_exhibition_date">2019-12-20 ~ 2020-03-20</string>
+
+    <string name="fare_label">Precio Tickets:</string>
+    <string name="fare_student">¥60 Estudiante</string>
+    <string name="fare_adult">¥100 Adulto </string>
+
+    <string name="exhibition_works_title">Obras</string>
+
+    <string name="cd_artwork_next">Next artwork</string>
+    <string name="title_activity_mas_obras">MasObrasActivity</string>
+
+    <string name="ver_mas_obras">Ver más obras</string>
+
+</resources>
