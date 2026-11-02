@@ -31,10 +31,15 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.outlined.MoreHoriz
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.ShoppingCart
+import androidx.compose.material.icons.outlined.Storefront
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -62,6 +67,28 @@ import com.example.proyectomuseo.ui.theme.AppSecondary
 import com.example.proyectomuseo.ui.theme.AppSurface
 import com.example.proyectomuseo.ui.theme.AppTheme
 import com.example.proyectomuseo.ui.theme.ProyectoMuseoTheme
+import androidx.compose.ui.graphics.vector.ImageVector
+
+
+sealed interface AppRoute{
+    data object Inicio: AppRoute
+    data object Obras: AppRoute
+    data object Mas: AppRoute
+    data object Perfil: AppRoute
+}
+
+data class BottomNavItem(
+    val route: AppRoute,
+    val labelRes: Int,
+    val icon: ImageVector
+)
+
+private val bottomNavItems = listOf(
+    BottomNavItem(com.example.proyectomuseo.AppRoute.Inicio, R.string.bottom_nav_home, Icons.Filled.Home),
+    BottomNavItem(com.example.proyectomuseo.AppRoute.Obras, R.string.bottom_nav_store, Icons.Outlined.Storefront),
+    BottomNavItem(com.example.proyectomuseo.AppRoute.Mas,R.string.bottom_nav_more, Icons.Outlined.MoreHoriz),
+    BottomNavItem(com.example.proyectomuseo.AppRoute.Perfil, R.string.bottom_nav_person, Icons.Outlined.Person)
+)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
