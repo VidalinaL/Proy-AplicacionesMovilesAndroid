@@ -19,8 +19,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.BrokenImage
+import androidx.compose.material.icons.outlined.Brush
+import androidx.compose.material.icons.outlined.Image
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
@@ -57,6 +61,8 @@ import com.example.proyectomuseo.ui.theme.ProyectoMuseoTheme
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
+//Importaciones para el ToolBar
+import android.content.Intent
 
 data class Obra(
     val idObra: Int = 0,
@@ -80,7 +86,6 @@ object RetrofitClient {
             .build().create(ApiService::class.java)
     }
 }
-
 class MasObrasActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,7 +93,20 @@ class MasObrasActivity : ComponentActivity() {
         setContent {
             ProyectoMuseoTheme {
                 MasObrasScreen(
-                    onBackClick = { finish() }
+                    onBackClick = { finish() },
+                    onNavigate = { route ->
+                        when (route) {
+                            AppRoute.Inicio -> startActivity(
+                                Intent(this, MainActivity::class.java).apply {
+                                    // Cierra Obras y vuelve a la Inicio que ya estaba abierta
+                                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                                }
+                            )
+                            AppRoute.Obras -> { } // ya estás aquí
+                            AppRoute.Mas -> startActivity(Intent(this, ArtistaActivity::class.java))
+                            AppRoute.Perfil -> { }
+                        }
+                    }
                 )
             }
         }
@@ -99,6 +117,7 @@ class MasObrasActivity : ComponentActivity() {
 @Composable
 fun MasObrasScreen(
     onBackClick: () -> Unit,
+    onNavigate: (AppRoute) -> Unit = {}
 ) {
     var obras by remember { mutableStateOf<List<Obra>>(emptyList()) }
     var cargando by remember { mutableStateOf(true) }
@@ -139,6 +158,12 @@ fun MasObrasScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
+            )
+        },
+        bottomBar = {
+            DashboardBottomNavigation(
+                selectedRoute = AppRoute.Obras, // la pestaña de ESTA pantalla
+                onNavigate = onNavigate
             )
         }
     ) { innerPadding ->
