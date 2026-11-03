@@ -63,11 +63,23 @@ class ArtistaActivity : ComponentActivity() {
                 ) {
                     ArtistaScreen(
                         onBackClick = { finish() },
-                        onObraClick = {
-                            startActivity(Intent(this, ObraActivity::class.java))
-                        },
-                        onVerMasObrasClick = {
-                            startActivity(Intent(this, MasObrasActivity::class.java))
+                        onObraClick = { startActivity(Intent(this, ObraActivity::class.java)) },
+                        onVerMasObrasClick = { startActivity(Intent(this, MasObrasActivity::class.java)) },
+                        onNavigate = { route ->
+                            when (route) {
+                                AppRoute.Inicio -> startActivity(
+                                    Intent(this, MainActivity::class.java).apply {
+                                        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                                    }
+                                )
+                                AppRoute.Obras -> startActivity(
+                                    Intent(this, MasObrasActivity::class.java).apply {
+                                        flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                                    }
+                                )
+                                AppRoute.Mas -> { } // ya estás aquí
+                                AppRoute.Perfil -> { }
+                            }
                         }
                     )
                 }
@@ -81,6 +93,7 @@ fun ArtistaScreen(
     onBackClick: () -> Unit,
     onObraClick: () -> Unit,
     onVerMasObrasClick: () -> Unit,
+    onNavigate: (AppRoute) -> Unit = {},
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
 
@@ -169,6 +182,7 @@ fun ArtistaScreen(
                 .fillMaxWidth()
                 .align(Alignment.BottomStart)
                 .navigationBarsPadding()
+                .padding(bottom = 80.dp)
                 .padding(horizontal = AppTheme.spacing.large)
         ){
             Text(
@@ -242,6 +256,16 @@ fun ArtistaScreen(
 
             Spacer(modifier = Modifier.height(AppTheme.spacing.large))
         } //Column contenido
+
+        // Barra inferior translúcida, mismo tono que la tarjeta "Ver más obras"
+        DashboardBottomNavigation(
+            modifier = Modifier.align(Alignment.BottomCenter),
+            selectedRoute = AppRoute.Mas,
+            containerColor = Color.White.copy(alpha = 0.15f),
+            selectedColor = Color.White,
+            unselectedColor = Color.White.copy(alpha = 0.6f),
+            onNavigate = onNavigate
+        )
     } //Box raíz
 }
 

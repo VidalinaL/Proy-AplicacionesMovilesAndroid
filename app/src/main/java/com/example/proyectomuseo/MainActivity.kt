@@ -192,12 +192,14 @@ fun MainScreen(
 fun DashboardBottomNavigation(
     modifier: Modifier = Modifier,
     selectedRoute: AppRoute = AppRoute.Inicio,
+    containerColor: Color = MaterialTheme.colorScheme.surface.copy(alpha = 0.92f),
+    selectedColor: Color = MaterialTheme.colorScheme.onSurface,
+    unselectedColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
     onNavigate: (AppRoute) -> Unit
 ) {
     NavigationBar(
         modifier = modifier.fillMaxWidth(),
-        // Fondo semitransparente, sin línea divisoria arriba
-        containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.92f),
+        containerColor = containerColor,
         tonalElevation = AppTheme.spacing.none
     ) {
         bottomNavItems.forEach { item ->
@@ -220,30 +222,24 @@ fun DashboardBottomNavigation(
                             style = MaterialTheme.typography.labelSmall,
                             maxLines = 1
                         )
-                        // Rayita bajo el ítem seleccionado (estilo "icon underline")
                         if (isSelected) {
                             Spacer(Modifier.height(2.dp))
                             Box(
                                 modifier = Modifier
                                     .width(20.dp)
                                     .height(2.dp)
-                                    .background(
-                                        color = MaterialTheme.colorScheme.onSurface,
-                                        shape = CircleShape
-                                    )
+                                    .background(selectedColor, CircleShape) // usa el color recibido
                             )
                         }
                     }
                 },
                 alwaysShowLabel = true,
                 colors = NavigationBarItemDefaults.colors(
-                    // Seleccionado: oscuro; sin fondo detrás del ícono
-                    selectedIconColor = MaterialTheme.colorScheme.onSurface,
-                    selectedTextColor = MaterialTheme.colorScheme.onSurface,
+                    selectedIconColor = selectedColor,
+                    selectedTextColor = selectedColor,
                     indicatorColor = Color.Transparent,
-                    // No seleccionado: gris suave
-                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                    unselectedIconColor = unselectedColor,
+                    unselectedTextColor = unselectedColor
                 )
             )
         }
