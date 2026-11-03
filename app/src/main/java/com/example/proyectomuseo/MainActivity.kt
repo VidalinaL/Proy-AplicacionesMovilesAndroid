@@ -69,6 +69,20 @@ import com.example.proyectomuseo.ui.theme.AppTheme
 import com.example.proyectomuseo.ui.theme.ProyectoMuseoTheme
 import androidx.compose.ui.graphics.vector.ImageVector
 
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.outlined.BrokenImage
+import androidx.compose.material.icons.outlined.Brush
+import androidx.compose.material.icons.outlined.Image
+
 
 sealed interface AppRoute{
     data object Inicio: AppRoute
@@ -85,8 +99,8 @@ data class BottomNavItem(
 
 private val bottomNavItems = listOf(
     BottomNavItem(com.example.proyectomuseo.AppRoute.Inicio, R.string.bottom_nav_home, Icons.Filled.Home),
-    BottomNavItem(com.example.proyectomuseo.AppRoute.Obras, R.string.bottom_nav_store, Icons.Outlined.Storefront),
-    BottomNavItem(com.example.proyectomuseo.AppRoute.Mas,R.string.bottom_nav_more, Icons.Outlined.MoreHoriz),
+    BottomNavItem(com.example.proyectomuseo.AppRoute.Obras, R.string.bottom_nav_image, Icons.Outlined.Image),
+    BottomNavItem(com.example.proyectomuseo.AppRoute.Mas,R.string.bottom_nav_more, Icons.Outlined.Brush),
     BottomNavItem(com.example.proyectomuseo.AppRoute.Perfil, R.string.bottom_nav_person, Icons.Outlined.Person)
 )
 
@@ -96,18 +110,20 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ProyectoMuseoTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    ExhibitionScreen(
-                        onArtworkClick = {
-                            // Requiere que exista la clase ObraActivity en el proyecto.
-                            startActivity(Intent(this, ArtistaActivity::class.java))
+                MainScreen(
+                    onArtworkClick = {
+                        startActivity(Intent(this, ArtistaActivity::class.java))
+                    },
+                    onNavigate = { route ->
+                        when (route) {
+                            AppRoute.Inicio -> { startActivity(Intent(this, MainActivity::class.java ))}
+                            AppRoute.Obras -> {startActivity(Intent(this, MasObrasActivity::class.java )) }
+                            AppRoute.Mas -> {startActivity(Intent(this, ArtistaActivity::class.java ))}
+                            AppRoute.Perfil -> { }
                         }
-                    )
-                }
-            } //ProyectoMuseoTheme
+                    }
+                )
+            }
         }
     }
 }
@@ -142,9 +158,109 @@ data class TicketExhibition(
 )
 
 // ============================================================
+// PANTALLA PRINCIPAL (envuelve ExhibitionScreen + barra inferior)
+// ============================================================
+@Composable
+fun MainScreen(
+    onArtworkClick: () -> Unit = {},
+    onNavigate: (AppRoute) -> Unit = {}
+) {
+    // Ruta actualmente seleccionada en la barra inferior
+    var currentRoute by remember { mutableStateOf<AppRoute>(AppRoute.Inicio) }
+
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        containerColor = AppBackground,
+        // ExhibitionScreen ya aplica su propio statusBarsPadding
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+        bottomBar = {
+            DashboardBottomNavigation(
+                selectedRoute = currentRoute,
+                onNavigate = { route ->
+                    currentRoute = route
+                    onNavigate(route)
+                }
+            )
+        }
+    ) { innerPadding ->
+        // Solo el padding inferior, para que la lista no quede tapada por la barra
+        ExhibitionScreen(
+            modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()),
+            onArtworkClick = onArtworkClick
+        )
+    }
+}
+
+// ============================================================
 // TOP BAR
 // ============================================================
+// ============================================================
+// BOTTOM BAR
+// ============================================================
+// ============================================================
+// BOTTOM BAR
+// ============================================================
+@Composable
+fun DashboardBottomNavigation(
+    modifier: Modifier = Modifier,
+    selectedRoute: AppRoute = AppRoute.Inicio,
+    onNavigate: (AppRoute) -> Unit
+) {
+    NavigationBar(
+        modifier = modifier.fillMaxWidth(),
+        // Fondo semitransparente, sin línea divisoria arriba
+        containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.92f),
+        tonalElevation = AppTheme.spacing.none
+    ) {
+        bottomNavItems.forEach { item ->
+            val isSelected = item.route == selectedRoute
 
+            NavigationBarItem(
+                selected = isSelected,
+                onClick = { onNavigate(item.route) },
+                icon = {
+                    Icon(
+                        imageVector = item.icon,
+                        contentDescription = null,
+                        modifier = Modifier.size(28.dp)
+                    )
+                },
+                label = {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = stringResource(item.labelRes),
+                            style = MaterialTheme.typography.labelSmall,
+                            maxLines = 1
+                        )
+                        // Rayita bajo el ítem seleccionado (estilo "icon underline")
+                        if (isSelected) {
+                            Spacer(Modifier.height(2.dp))
+                            Box(
+                                modifier = Modifier
+                                    .width(20.dp)
+                                    .height(2.dp)
+                                    .background(
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                        shape = CircleShape
+                                    )
+                            )
+                        }
+                    }
+                },
+                alwaysShowLabel = true,
+                colors = NavigationBarItemDefaults.colors(
+                    // Seleccionado: oscuro; sin fondo detrás del ícono
+                    selectedIconColor = MaterialTheme.colorScheme.onSurface,
+                    selectedTextColor = MaterialTheme.colorScheme.onSurface,
+                    indicatorColor = Color.Transparent,
+                    // No seleccionado: gris suave
+                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            )
+        }
+    }
+}
 @Composable
 fun ExhibitionTopBar(
     city: String,
@@ -486,16 +602,14 @@ fun ExhibitionScreen(
         )
     }
 
-    // Column NO scrolleable en general: la cabecera (top bar, tabs, tarjeta
-    // destacada) queda fija, y solo la lista de "Buy tickets" scrollea sola
-    // dentro de su propio espacio (weight(1f)), igual que la fila horizontal
-    // de exhibiciones tiene su propio scroll independiente.
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(AppBackground)
             .statusBarsPadding()
-    ) {
+            .verticalScroll(rememberScrollState())   // <-- AGREGAR
+    )  {
         ExhibitionTopBar(city = stringResource(R.string.city_paris), onMenuClick = { })
 
         Text(
@@ -541,19 +655,13 @@ fun ExhibitionScreen(
 
         Spacer(Modifier.height(AppTheme.spacing.small))
 
-        LazyColumn(
-            modifier = Modifier.weight(1f),
-            contentPadding = PaddingValues(
-                horizontal = AppTheme.spacing.regular,
-                vertical = AppTheme.spacing.extraSmall
-            ),
+        Column(
+            modifier = Modifier
+                .padding(horizontal = AppTheme.spacing.regular, vertical = AppTheme.spacing.extraSmall),
             verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.small)
         ) {
-            items(ticketExhibitions) { exhibition ->
+            ticketExhibitions.forEach { exhibition ->
                 TicketCard(exhibition = exhibition, onBuyClick = { })
-            }
-            item {
-                Spacer(Modifier.navigationBarsPadding())
             }
         }
     }
